@@ -101,10 +101,15 @@ public class Login extends javax.swing.JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Invalid Credentials!"); 
         }
+        
+        usernameFld.setText("");
+        passwordFld.setText("");
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         frame.registerNav();
+        usernameFld.setText("");
+        passwordFld.setText("");
     }//GEN-LAST:event_registerBtnActionPerformed
 
 
