@@ -120,7 +120,7 @@ public class Register extends javax.swing.JPanel {
             return;
         } 
             
-        boolean added = frame.registerAction(username, password, confpass);
+        boolean added = frame.registerAction(username, password);
             
         if (added) {
             JOptionPane.showMessageDialog(null, "New User Created!");     

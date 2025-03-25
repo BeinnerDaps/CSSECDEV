@@ -92,10 +92,8 @@ public class Login extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Empty Fields!");
             return;
         }
-        
-        boolean userExists = frame.main.sqlite.authLogin(username, password);
  
-        if (userExists) {
+        if (frame.main.sqlite.authLogin(username, password)) {
             JOptionPane.showMessageDialog(null, "Login Successful!");
             frame.mainNav();       
         } else {
