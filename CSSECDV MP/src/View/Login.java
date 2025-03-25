@@ -85,15 +85,13 @@ public class Login extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        String username = usernameFld.getText();
-        String password = passwordFld.getText();
-        
-        if ("".equals(username) || "".equals(password)) {
+
+        if ("".equals(usernameFld.getText()) || "".equals(passwordFld.getText())) {
             JOptionPane.showMessageDialog(null, "Empty Fields!");
             return;
         }
  
-        if (frame.main.sqlite.authLogin(username, password)) {
+        if (frame.main.sqlite.authLogin(usernameFld.getText(), passwordFld.getText())) {
             JOptionPane.showMessageDialog(null, "Login Successful!");
             frame.mainNav();       
         } else {

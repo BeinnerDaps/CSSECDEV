@@ -99,28 +99,25 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        String username = usernameFld.getText();
-        String password = passwordFld.getText();
-        String confpass = confpassFld.getText();
         
-        if ("".equals(username) || "".equals(password) || "".equals(confpass)) {
+        if ("".equals(usernameFld.getText()) || "".equals(usernameFld.getText()) || "".equals(confpassFld.getText())) {
             JOptionPane.showMessageDialog(null, "Empty Fields!");
             return;
         }
         
-        if (!password.equals(confpass)) { 
+        if (!passwordFld.getText().equals(confpassFld.getText())) { 
             JOptionPane.showMessageDialog(null, "Password Mismatch!");
             return;
         }
         
-        boolean userExists = frame.main.sqlite.registerUser(username);       
+        boolean userExists = frame.main.sqlite.registerUser(usernameFld.getText());       
     
         if (userExists) {
             JOptionPane.showMessageDialog(null, "User Already Exists.");
             return;
         } 
             
-        boolean added = frame.registerAction(username, password);
+        boolean added = frame.registerAction(usernameFld.getText(), passwordFld.getText());
             
         if (added) {
             JOptionPane.showMessageDialog(null, "New User Created!");     
