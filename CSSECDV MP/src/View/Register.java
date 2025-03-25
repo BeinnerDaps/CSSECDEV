@@ -1,6 +1,8 @@
 
 package View;
 
+import javax.swing.JOptionPane;
+
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
@@ -97,8 +99,36 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
-        frame.loginNav();
+        String username = usernameFld.getText();
+        String password = passwordFld.getText();
+        String confpass = confpassFld.getText();
+        
+        if ("".equals(username) || "".equals(password) || "".equals(confpass)) {
+            JOptionPane.showMessageDialog(null, "Empty Fields!");
+            return;
+        }
+        
+        if (!password.equals(confpass)) { 
+            JOptionPane.showMessageDialog(null, "Password Mismatch!");
+            return;
+        }
+        
+        boolean userExists = frame.main.sqlite.registerUser(username);       
+    
+        if (userExists) {
+            JOptionPane.showMessageDialog(null, "User Already Exists.");
+            return;
+        } 
+            
+        boolean added = frame.registerAction(username, password, confpass);
+            
+        if (added) {
+            JOptionPane.showMessageDialog(null, "New User Created!");     
+        } else {
+            JOptionPane.showMessageDialog(null, "Error Creating New User.");  
+        }
+       
+        frame.loginNav(); 
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed

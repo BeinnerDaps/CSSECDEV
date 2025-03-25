@@ -1,6 +1,5 @@
 package Controller;
 
-
 import Model.History;
 import Model.Logs;
 import Model.Product;
@@ -9,7 +8,6 @@ import View.Frame;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-
 
 
 public class Main {

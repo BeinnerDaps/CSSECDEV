@@ -1,6 +1,8 @@
 
 package View;
 
+import javax.swing.*;
+
 public class Login extends javax.swing.JPanel {
 
     public Frame frame;
@@ -83,7 +85,22 @@ public class Login extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        frame.mainNav();
+        String username = usernameFld.getText();
+        String password = passwordFld.getText();
+        
+        if ("".equals(username) || "".equals(password)) {
+            JOptionPane.showMessageDialog(null, "Empty Fields!");
+            return;
+        }
+        
+        boolean userExists = frame.main.sqlite.authLogin(username, password);
+ 
+        if (userExists) {
+            JOptionPane.showMessageDialog(null, "Login Successful!");
+            frame.mainNav();       
+        } else {
+            JOptionPane.showMessageDialog(null, "Invalid Credentials!"); 
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
