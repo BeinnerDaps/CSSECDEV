@@ -6,7 +6,7 @@ import javax.swing.*;
 public class Login extends javax.swing.JPanel {
 
     public Frame frame;
-    
+
     public Login() {
         initComponents();
     }
@@ -17,7 +17,7 @@ public class Login extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
         usernameFld = new javax.swing.JTextField();
-        passwordFld = new javax.swing.JTextField();
+        passwordFld = new javax.swing.JPasswordField();
         registerBtn = new javax.swing.JButton();
         loginBtn = new javax.swing.JButton();
 
@@ -86,18 +86,18 @@ public class Login extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
 
-        if ("".equals(usernameFld.getText()) || "".equals(passwordFld.getText())) {
+        if ("".equals(usernameFld.getText()) || "".equals(new String(passwordFld.getPassword()))) {
             JOptionPane.showMessageDialog(null, "Empty Fields!");
             return;
         }
- 
-        if (frame.main.sqlite.authLogin(usernameFld.getText(), passwordFld.getText())) {
+
+        if (frame.main.sqlite.authLogin(usernameFld.getText(), new String(passwordFld.getPassword()))) {
             JOptionPane.showMessageDialog(null, "Login Successful!");
-            frame.mainNav();       
+            frame.mainNav();
         } else {
-            JOptionPane.showMessageDialog(null, "Invalid Credentials!"); 
+            JOptionPane.showMessageDialog(null, "Invalid Credentials!");
         }
-        
+
         usernameFld.setText("");
         passwordFld.setText("");
     }//GEN-LAST:event_loginBtnActionPerformed
@@ -112,7 +112,7 @@ public class Login extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginBtn;
-    private javax.swing.JTextField passwordFld;
+    private javax.swing.JPasswordField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
     // End of variables declaration//GEN-END:variables

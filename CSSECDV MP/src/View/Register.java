@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
-    
+
     public Register() {
         initComponents();
     }
@@ -16,10 +16,10 @@ public class Register extends javax.swing.JPanel {
     private void initComponents() {
 
         registerBtn = new javax.swing.JButton();
-        passwordFld = new javax.swing.JTextField();
+        passwordFld = new javax.swing.JPasswordField();
         usernameFld = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        confpassFld = new javax.swing.JTextField();
+        confpassFld = new javax.swing.JPasswordField();
         backBtn = new javax.swing.JButton();
 
         registerBtn.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -99,34 +99,37 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        
-        if ("".equals(usernameFld.getText()) || "".equals(usernameFld.getText()) || "".equals(confpassFld.getText())) {
+
+        if ("".equals(usernameFld.getText()) || 
+            "".equals(new String(passwordFld.getPassword())) || 
+            "".equals(new String(confpassFld.getPassword()))
+        ) {
             JOptionPane.showMessageDialog(null, "Empty Fields!");
             return;
         }
-        
-        if (!passwordFld.getText().equals(confpassFld.getText())) { 
+
+        if (!new String(passwordFld.getPassword()).equals(new String(confpassFld.getPassword()))) {
             JOptionPane.showMessageDialog(null, "Password Mismatch!");
             return;
         }
-        
-        boolean userExists = frame.main.sqlite.registerUser(usernameFld.getText());       
-    
+
+        boolean userExists = frame.main.sqlite.registerUser(usernameFld.getText());
+
         if (userExists) {
             JOptionPane.showMessageDialog(null, "User Already Exists.");
             return;
-        } 
-            
-        boolean added = frame.registerAction(usernameFld.getText(), passwordFld.getText());
-            
-        if (added) {
-            JOptionPane.showMessageDialog(null, "New User Created!");     
-        } else {
-            JOptionPane.showMessageDialog(null, "Error Creating New User.");  
         }
-       
-        frame.loginNav(); 
-        
+
+        boolean added = frame.registerAction(usernameFld.getText(), new String(passwordFld.getPassword()));
+
+        if (added) {
+            JOptionPane.showMessageDialog(null, "New User Created!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Error Creating New User.");
+        }
+
+        frame.loginNav();
+
         usernameFld.setText("");
         passwordFld.setText("");
         confpassFld.setText("");
@@ -134,7 +137,7 @@ public class Register extends javax.swing.JPanel {
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         frame.loginNav();
-        
+
         usernameFld.setText("");
         passwordFld.setText("");
         confpassFld.setText("");
@@ -143,9 +146,9 @@ public class Register extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
-    private javax.swing.JTextField confpassFld;
+    private javax.swing.JPasswordField confpassFld;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField passwordFld;
+    private javax.swing.JPasswordField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
     // End of variables declaration//GEN-END:variables
