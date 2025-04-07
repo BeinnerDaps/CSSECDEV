@@ -283,7 +283,7 @@ public class SQLite {
         return users;
     }
 
-    public void addUser(String username, String password, int role) {
+        public void addUser(String username, String password, int role) {
         String sql = "INSERT INTO users(username,password,role) VALUES('" + username + "','" + password + "','" + role + "')";
 
         try (Connection conn = DriverManager.getConnection(driverURL);
