@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
-import getPosts from "../hooks/getPosts";
+import readPosts from "../hooks/readPosts";
 import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
   const { session, signOutUser, checkUserRole } = userAuth();
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
-  const { posts, loading, error } = getPosts();
+  const { posts, loading, error } = readPosts();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -38,6 +38,16 @@ const AdminPage = () => {
     }
   };
 
+  const handleSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await signOutUser();
+      navigate("/settings");
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+    }
+  };
+
   return (
     <div>
       <h1>Admin Page</h1>
@@ -46,6 +56,10 @@ const AdminPage = () => {
 
       <div>
         <button onClick={handleSignOut}>Sign Out</button>
+      </div>
+
+      <div>
+        <button onClick={handleSettings}>Sign Out</button>
       </div>
 
       <pre>{JSON.stringify(posts, null, 2)}</pre>

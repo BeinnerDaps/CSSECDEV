@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
+import readPosts from "../hooks/readPosts";
 import { useNavigate } from "react-router-dom";
-import getPosts from "../hooks/getPosts";
 
-const mainpage = () => {
+const CustomerPage = () => {
   const { session, signOutUser, checkUserRole } = userAuth();
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
-  const { posts, loading, error } = getPosts();
+  const { posts, loading, error } = readPosts();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -29,6 +29,16 @@ const mainpage = () => {
     }
   };
 
+  const handleSettings = async (e) => {
+    e.preventDefault();
+    try {
+      await signOutUser();
+      navigate("/settings");
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+    }
+  };
+
   return (
     <div>
       <h1>Customer Page</h1>
@@ -39,9 +49,13 @@ const mainpage = () => {
         <button onClick={handleSignOut}>Sign Out</button>
       </div>
 
+      <div>
+        <button onClick={handleSettings}>Sign Out</button>
+      </div>
+
       <pre>{JSON.stringify(posts, null, 2)}</pre>
     </div>
   );
 };
 
-export default mainpage;
+export default CustomerPage;

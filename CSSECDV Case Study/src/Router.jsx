@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import AdminPage from "./pages/AdminPage";
 import ProdManPage from "./pages/ProdManPage";
 import CustomerPage from "./pages/CustomerPage";
+import Settings from "./pages/Settings";
 import ForgotPassword from "./component/ForgotPassword";
 import ResetPassword from "./component/ResetPassword";
 import { PrivateRoute, SelectRoute } from "./context/PrivateRoute";
@@ -53,5 +54,13 @@ export const router = createBrowserRouter([
   {
     path: "/reset-password",
     element: <ResetPassword />,
+  },
+  {
+    path: "/settings",
+    element: (
+      <PrivateRoute>
+        <Settings />{" "}
+      </PrivateRoute>
+    ),
   },
 ]);
