@@ -47,8 +47,38 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // Check session on initial load
-  // and subscribe to auth state changes
+  // Check user role
+  const checkUserRole = async (user_id) => {
+    const { data, error } = await supabase
+      .from("user")
+      .select("role")
+      .eq("id", user_id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching user role:", error.message);
+      return null;
+    }
+
+    const validRoles = ["admin", "product_manager", "customer"];
+    if (validRoles.includes(data.role)) {
+      return data.role;
+    } else {
+      return null;
+    }
+  };
+
+  // Get posts
+  const getPosts = async () => {
+    const { data, error } = await supabase.from("post").select("*");
+    if (error) {
+      console.error("Error fetching posts:", error.message);
+      return null;
+    }
+    return data;
+  };
+
+  // Check session on initial load and subscribe to auth state changes
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -59,9 +89,17 @@ export const AuthContextProvider = ({ children }) => {
     });
   }, []);
 
+  // Return the context provider with the session and auth functions
   return (
     <AuthContext.Provider
-      value={{ session, signUpNewUser, signInUser, signOutUser }}
+      value={{
+        session,
+        signUpNewUser,
+        signInUser,
+        signOutUser,
+        checkUserRole,
+        getPosts,
+      }}
     >
       {children}
     </AuthContext.Provider>

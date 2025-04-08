@@ -3,7 +3,8 @@ import App from "./App";
 import SignUp from "./component/SignUp";
 import SignIn from "./component/SignIn";
 import Dashboard from "./component/Dashboard";
-import PrivateRoute from "./component/PrivateRoute";
+import AdminPage from "./pages/AdminPage";
+import { PrivateRoute, AdminRoute } from "./context/PrivateRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -15,6 +16,14 @@ export const router = createBrowserRouter([
       <PrivateRoute>
         <Dashboard />{" "}
       </PrivateRoute>
+    ),
+  },
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminPage />{" "}
+      </AdminRoute>
     ),
   },
 ]);
