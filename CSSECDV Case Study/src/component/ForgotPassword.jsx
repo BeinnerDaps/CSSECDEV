@@ -1,26 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userAuth } from "../context/Authcontext";
 
-const SignIn = () => {
+const ForgotPassword = () => {
+  const { session, resetPassword, sendPasswordRecovery } = userAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { session, signInUser } = userAuth();
-  const navigate = useNavigate();
-
-  const handleSignIn = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    setSuccess(false);
 
     try {
-      const result = await signInUser(email, password);
-
+      const result = await sendPasswordRecovery(email);
       if (result.success) {
-        navigate("/dashboard");
+        setSuccess(true);
+      } else {
+        setError(result.error);
       }
     } catch (error) {
       setError(error.message);
@@ -34,72 +34,52 @@ const SignIn = () => {
       <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-white text-center mb-4">
-            Sign in to Account
+            Reset Password
           </h2>
 
-          <form onSubmit={handleSignIn} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Email
+                Enter Recovery Email
               </label>
               <input
                 type="email"
                 required
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Enter Email"
+                placeholder="Enter Recovery Email"
               />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-300 mb-1"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                required
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Create a password"
-              />
-            </div>
-
-            <div className="text-right mb-4">
-              <Link
-                to="/forgotpassword"
-                className="text-white underline text-sm font-medium"
-              >
-                Forgot Password?
-              </Link>
             </div>
 
             {error && <div className="text-center text-red-500">{error}</div>}
-
+            {success && (
+              <div className="text-center text-green-500">
+                Recovery email sent successfully!
+              </div>
+            )}
             <div>
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
               >
-                {loading ? "Signing in..." : "Sign in"}
+                Send Recovery Email
               </button>
             </div>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-3 text-center">
             <p className="text-sm text-gray-400">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <Link
-                to="/signup"
+                to="/signin"
                 className="text-purple-400 hover:text-purple-300 font-medium"
               >
-                Sign up
+                Sign In
               </Link>
             </p>
           </div>
@@ -109,4 +89,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;

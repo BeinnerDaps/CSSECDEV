@@ -2,8 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import SignUp from "./component/SignUp";
 import SignIn from "./component/SignIn";
-import Dashboard from "./component/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import AdminPage from "./pages/AdminPage";
+import ForgotPassword from "./component/ForgotPassword";
 import { PrivateRoute, AdminRoute } from "./context/PrivateRoute";
 
 export const router = createBrowserRouter([
@@ -25,5 +26,9 @@ export const router = createBrowserRouter([
         <AdminPage />{" "}
       </AdminRoute>
     ),
+  },
+  {
+    path: "/forgotpassword",
+    element: <ForgotPassword />,
   },
 ]);

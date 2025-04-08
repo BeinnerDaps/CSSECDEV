@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
+import getPosts from "../hooks/getPosts";
 import { useNavigate } from "react-router-dom";
 
 const dashboard = () => {
-  const { session, signOutUser, checkUserRole, getPosts } = userAuth();
+  const { session, signOutUser, checkUserRole } = userAuth();
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
   const [role, setRole] = useState(null);
+  const { posts, loading, error } = getPosts();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -17,16 +18,6 @@ const dashboard = () => {
     };
     fetchRole();
   }, [session, checkUserRole]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      if (session && session.user) {
-        const userPosts = await getPosts(session.user.id);
-        setPosts(userPosts);
-      }
-    };
-    fetchPosts();
-  }, [session, getPosts]);
 
   const handleAdmin = async (e) => {
     e.preventDefault();

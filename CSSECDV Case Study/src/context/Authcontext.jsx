@@ -1,10 +1,25 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
+const host = import.meta.env.VITE_LOCALHOST;
+const port = import.meta.env.VITE_PORT;
+const url = `http://${host}:${port}`;
+
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(null);
+
+  // Check session on initial load and subscribe to auth state changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
   // Sign up new user
   const signUpNewUser = async (email, password) => {
@@ -68,26 +83,24 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // Get posts
-  const getPosts = async () => {
-    const { data, error } = await supabase.from("post").select("*");
+  // Send password recovery email
+  const sendPasswordRecovery = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: url + "/reset-password",
+    });
+
     if (error) {
-      console.error("Error fetching posts:", error.message);
-      return null;
+      console.error("Error sending password recovery email:", error.message);
+      return { success: false, error };
     }
-    return data;
+    return { success: true };
   };
 
-  // Check session on initial load and subscribe to auth state changes
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  const updatePassword = async (newPassword) => {
+    const { error } = await supabase.auth.update({ password: newPassword });
+    if (error) throw new Error(error.message);
+    return true;
+  };
 
   // Return the context provider with the session and auth functions
   return (
@@ -98,7 +111,8 @@ export const AuthContextProvider = ({ children }) => {
         signInUser,
         signOutUser,
         checkUserRole,
-        getPosts,
+        sendPasswordRecovery,
+        updatePassword,
       }}
     >
       {children}
