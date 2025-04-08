@@ -4,8 +4,11 @@ import SignUp from "./component/SignUp";
 import SignIn from "./component/SignIn";
 import Dashboard from "./pages/Dashboard";
 import AdminPage from "./pages/AdminPage";
+import ProdManPage from "./pages/ProdManPage";
+import CustomerPage from "./pages/CustomerPage";
 import ForgotPassword from "./component/ForgotPassword";
-import { PrivateRoute, AdminRoute } from "./context/PrivateRoute";
+import ResetPassword from "./component/ResetPassword";
+import { PrivateRoute, SelectRoute } from "./context/PrivateRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -14,21 +17,41 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <PrivateRoute>
+      <SelectRoute>
         <Dashboard />{" "}
-      </PrivateRoute>
+      </SelectRoute>
     ),
   },
   {
     path: "/admin",
     element: (
-      <AdminRoute>
+      <SelectRoute>
         <AdminPage />{" "}
-      </AdminRoute>
+      </SelectRoute>
     ),
   },
   {
-    path: "/forgotpassword",
+    path: "/product-manager",
+    element: (
+      <SelectRoute>
+        <ProdManPage />{" "}
+      </SelectRoute>
+    ),
+  },
+  {
+    path: "/user",
+    element: (
+      <SelectRoute>
+        <CustomerPage />{" "}
+      </SelectRoute>
+    ),
+  },
+  {
+    path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
 ]);

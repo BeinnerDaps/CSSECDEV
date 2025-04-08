@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Signin from "./component/SignIn";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
     <>
-      <Signin />
+      <Dashboard />
     </>
   );
 }

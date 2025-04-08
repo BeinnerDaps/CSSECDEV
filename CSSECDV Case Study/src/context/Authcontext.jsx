@@ -75,12 +75,7 @@ export const AuthContextProvider = ({ children }) => {
       return null;
     }
 
-    const validRoles = ["admin", "product_manager", "customer"];
-    if (validRoles.includes(data.role)) {
-      return data.role;
-    } else {
-      return null;
-    }
+    return data.role;
   };
 
   // Send password recovery email

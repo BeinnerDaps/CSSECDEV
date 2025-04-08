@@ -72,7 +72,7 @@ const SignIn = () => {
 
             <div className="text-right mb-4">
               <Link
-                to="/forgotpassword"
+                to="/forgot-password"
                 className="text-white underline text-sm font-medium"
               >
                 Forgot Password?

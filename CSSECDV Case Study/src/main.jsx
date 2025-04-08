@@ -7,7 +7,6 @@ import { AuthContextProvider } from "./context/Authcontext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <h1 className="text-3xl pt-4 font-bold text-center">CSSECDV Case Study</h1>
     <AuthContextProvider>
       <RouterProvider router={router} />
     </AuthContextProvider>

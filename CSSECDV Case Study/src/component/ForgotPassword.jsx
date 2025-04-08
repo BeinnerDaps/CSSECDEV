@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { userAuth } from "../context/Authcontext";
 
 const ForgotPassword = () => {
-  const { session, resetPassword, sendPasswordRecovery } = userAuth();
+  const { session, sendPasswordRecovery } = userAuth();
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
