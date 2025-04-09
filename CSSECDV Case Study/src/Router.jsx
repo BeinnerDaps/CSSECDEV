@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <PrivateRoute>
-        <Dashboard />{" "}
+        <Dashboard />
       </PrivateRoute>
     ),
   },
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
     path: "/admin",
     element: (
       <SelectRoute>
-        <AdminPage />{" "}
+        <AdminPage />
       </SelectRoute>
     ),
   },
@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
     path: "/product-manager",
     element: (
       <SelectRoute>
-        <ProdManPage />{" "}
+        <ProdManPage />
       </SelectRoute>
     ),
   },
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
     path: "/user",
     element: (
       <SelectRoute>
-        <CustomerPage />{" "}
+        <CustomerPage />
       </SelectRoute>
     ),
   },
@@ -59,6 +59,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/settings",
-    element: <Settings />,
+    element: (
+      <PrivateRoute>
+        <Settings />
+      </PrivateRoute>
+    ),
   },
 ]);

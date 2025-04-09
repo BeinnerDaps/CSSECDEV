@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../api/supabaseClient";
 import { userAuth } from "../context/Authcontext";
 
 export const getPosts = () => {
@@ -31,5 +31,5 @@ export const getPosts = () => {
     fetchPosts();
   }, [session]);
 
-  return { posts, error, loading };
+  return posts;
 };

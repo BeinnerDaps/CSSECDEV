@@ -8,6 +8,7 @@ const SignIn = () => {
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
 
   const { session, signInUser } = userAuth();
   const navigate = useNavigate();
@@ -21,9 +22,12 @@ const SignIn = () => {
 
       if (result.success) {
         navigate("/dashboard");
+      } else {
+        setError(result.error);
       }
     } catch (error) {
       setError(error.message);
+      setAttempts((prev) => prev + 1);
     } finally {
       setLoading(false);
     }

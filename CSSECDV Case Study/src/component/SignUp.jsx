@@ -18,8 +18,14 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (confirmPassword !== password) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await signUpNewUser(email, password);
+      const result = await signUpNewUser(username, email, password);
 
       if (result.success) {
         navigate("/dashboard");

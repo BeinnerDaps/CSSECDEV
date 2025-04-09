@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { userAuth } from "../context/Authcontext";
-import { getPosts } from "../hooks/Posts";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {

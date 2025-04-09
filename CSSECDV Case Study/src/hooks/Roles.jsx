@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../api/supabaseClient";
 import { userAuth } from "../context/Authcontext";
 
-const checkUserRole = (user_id) => {
+export const checkUserRole = (user_id) => {
   const { session } = userAuth();
   const [role, setRole] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!session || !session.user) {
+    if (!session || !session.user || !user_id) {
       setLoading(false);
       return;
     }
@@ -18,7 +18,7 @@ const checkUserRole = (user_id) => {
       setLoading(true);
       try {
         const { data, error } = await supabase
-          .from("user")
+          .from("users")
           .select("role")
           .eq("id", user_id)
           .single();
@@ -32,10 +32,8 @@ const checkUserRole = (user_id) => {
       }
     };
 
-    checkUserRole();
+    checkUserRole(user_id);
   }, [session, user_id]);
 
-  return { role, error, loading };
+  return role;
 };
-
-export default checkUserRole;
