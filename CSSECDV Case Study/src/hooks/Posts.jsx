@@ -5,8 +5,8 @@ import { userAuth } from "../context/Authcontext";
 export const getPosts = () => {
   const { session } = userAuth();
   const [posts, setPosts] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [postError, setError] = useState(null);
+  const [postLoading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!session || !session.user) {
@@ -31,5 +31,5 @@ export const getPosts = () => {
     fetchPosts();
   }, [session]);
 
-  return posts;
+  return { posts, postError, postLoading };
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { userAuth } from "./Authcontext";
+import { useUserRole } from "../hooks/Roles";
 import { Navigate, useLocation } from "react-router-dom";
 
 export const PrivateRoute = ({ children }) => {
@@ -13,25 +14,12 @@ export const PrivateRoute = ({ children }) => {
 };
 
 export const SelectRoute = ({ children }) => {
-  const { session, checkUserRole } = userAuth();
-  const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { session } = userAuth();
+  const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
   const location = useLocation();
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (session && session.user && checkUserRole) {
-        const userRole = await checkUserRole(session.user.id);
-        setRole(userRole);
-      }
-      setLoading(false);
-    };
-    fetchRole();
-  }, [session, checkUserRole]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (roleLoading) return <div>Loading...</div>;
+  if (roleError) return <div>Role Error: {roleError}</div>;
 
   const roleToPath = {
     admin: "/admin",
@@ -42,7 +30,7 @@ export const SelectRoute = ({ children }) => {
   const allowedPath = roleToPath[role] || "/";
 
   if (location.pathname !== allowedPath) {
-    return <Navigate to={allowedPath} />;
+    return <Navigate to={allowedPath} replace />;
   }
 
   return <>{children}</>;

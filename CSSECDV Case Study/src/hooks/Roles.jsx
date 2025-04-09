@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "../api/supabaseClient";
 import { userAuth } from "../context/Authcontext";
 
-export const checkUserRole = (user_id) => {
+export const useUserRole = (user_id) => {
   const { session } = userAuth();
   const [role, setRole] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [roleError, setError] = useState(null);
+  const [roleLoading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!session || !session.user || !user_id) {
@@ -14,7 +14,7 @@ export const checkUserRole = (user_id) => {
       return;
     }
 
-    const checkUserRole = async (user_id) => {
+    const fetchUserRole = async (user_id) => {
       setLoading(true);
       try {
         const { data, error } = await supabase
@@ -32,8 +32,8 @@ export const checkUserRole = (user_id) => {
       }
     };
 
-    checkUserRole(user_id);
+    fetchUserRole(user_id);
   }, [session, user_id]);
 
-  return role;
+  return { role, roleError, roleLoading };
 };
