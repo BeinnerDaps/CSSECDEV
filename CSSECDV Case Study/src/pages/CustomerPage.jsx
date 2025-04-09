@@ -32,7 +32,6 @@ const CustomerPage = () => {
   const handleSettings = async (e) => {
     e.preventDefault();
     try {
-      await signOutUser();
       navigate("/settings");
     } catch (error) {
       console.error("Error signing out:", error.message);

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import SignUp from "./component/SignUp";
 import SignIn from "./component/SignIn";
+import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import AdminPage from "./pages/AdminPage";
 import ProdManPage from "./pages/ProdManPage";
@@ -13,14 +14,15 @@ import { PrivateRoute, SelectRoute } from "./context/PrivateRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <App /> },
+  { path: "/home", element: <Home /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/signin", element: <SignIn /> },
   {
     path: "/dashboard",
     element: (
-      <SelectRoute>
+      <PrivateRoute>
         <Dashboard />{" "}
-      </SelectRoute>
+      </PrivateRoute>
     ),
   },
   {
