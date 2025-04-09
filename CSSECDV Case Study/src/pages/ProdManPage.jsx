@@ -50,7 +50,7 @@ const ProdManPage = () => {
       </div>
 
       <div>
-        <button onClick={handleSettings}>Sign Out</button>
+        <button onClick={handleSettings}>Settings</button>
       </div>
 
       <pre>{JSON.stringify(posts, null, 2)}</pre>
