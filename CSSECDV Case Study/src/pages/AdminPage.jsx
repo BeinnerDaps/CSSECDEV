@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
-import readPosts from "../hooks/readPosts";
+import { getPosts } from "../hooks/Posts";
 import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
   const { session, signOutUser, checkUserRole } = userAuth();
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
-  const { posts, loading, error } = readPosts();
+  const { posts, loading, error } = getPosts();
 
   useEffect(() => {
     const fetchRole = async () => {

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { userAuth } from "../context/Authcontext";
 
-const getPosts = (userId, isAdmin = false) => {
+const checkUserRole = (user_id) => {
   const { session } = userAuth();
-  const [posts, setPosts] = useState([]);
+  const [role, setRole] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -14,24 +14,28 @@ const getPosts = (userId, isAdmin = false) => {
       return;
     }
 
-    const fetchPosts = async () => {
+    const checkUserRole = async (user_id) => {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from("post").select("*");
+        const { data, error } = await supabase
+          .from("user")
+          .select("role")
+          .eq("id", user_id)
+          .single();
         if (error) throw error;
-        setPosts(data);
+        setRole(data.role);
       } catch (error) {
-        console.error("Error fetching posts:", err.message);
-        setError(err.message);
+        console.error("Error fetching user role:", error.message);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
-  }, [userId, isAdmin]);
+    checkUserRole();
+  }, [session, user_id]);
 
-  return { posts, error, loading };
+  return { role, error, loading };
 };
 
-export default getPosts;
+export default checkUserRole;

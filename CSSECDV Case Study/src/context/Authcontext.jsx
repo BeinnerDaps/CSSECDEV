@@ -91,10 +91,24 @@ export const AuthContextProvider = ({ children }) => {
     return { success: true };
   };
 
+  // Update user password
   const updatePassword = async (newPassword) => {
-    const { error } = await supabase.auth.update({ password: newPassword });
-    if (error) throw new Error(error.message);
-    return true;
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      console.error("Error updating password:", error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  };
+
+  // Set temporary session based on token
+  const setTemporarySession = async (token) => {
+    const { error } = await supabase.auth.setSession({ access_token: token });
+    if (error) {
+      console.error("Error setting temporary session:", error.message);
+      return { success: false, error };
+    }
+    return { success: true };
   };
 
   // Return the context provider with the session and auth functions
@@ -108,6 +122,7 @@ export const AuthContextProvider = ({ children }) => {
         checkUserRole,
         sendPasswordRecovery,
         updatePassword,
+        setTemporarySession,
       }}
     >
       {children}
