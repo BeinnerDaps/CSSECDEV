@@ -11,8 +11,12 @@ const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <button onClick={() => handleNavigation("/signin")}>Sign In</button>
-      <button onClick={() => handleNavigation("/signup")}>Sign Up</button>
+      <button onClick={() => handleNavigation("/signin")}
+        style={{ padding: "10px", backgroundColor: "#808080", color: "white", borderRadius: "5px"}}
+        >Sign In</button>
+      <button onClick={() => handleNavigation("/signup")}
+        style={{ padding: "10px", backgroundColor: "#808080", color: "white", borderRadius: "5px"}}
+        >Sign Up</button>
     </div>
   );
 };
