@@ -115,21 +115,27 @@ export const AuthContextProvider = ({ children }) => {
 
   // Update user password
   const updatePassword = async (newPassword) => {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) {
-      console.error("Error updating password:", error.message);
-      return { success: false, error };
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) throw error;
+
+      return { success: true };
+    } catch (error) {
+      console.error("Error updating password:", error);
+      return { success: false, error: error.details || error.message };
     }
-    return { success: true };
   };
 
   // Set temporary session based on token
   const setTemporarySession = async (token) => {
-    const { error } = await supabase.auth.setSession({ access_token: token });
-    if (error) {
-      console.error("Error setting temporary session:", error.message);
-      return { success: false, error };
-    }
+    const { data, error } = await supabase.auth.setSession({
+      access_token: token,
+    });
+    if (error) throw error;
+    setSession(data.session);
     return { success: true };
   };
 
