@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
 import { getProducts, insertProduct, deleteProduct } from "../hooks/Products";
+import { insertLog } from "../hooks/Logs";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -26,6 +27,7 @@ const ProdManPage = () => {
     e.preventDefault();
     try {
       await signOutUser();
+      await insertLog(role, "Successfully signed out");
       navigate("/");
     } catch (error) {
       console.error("Error signing out:", error.message);
