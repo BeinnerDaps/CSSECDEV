@@ -21,15 +21,19 @@ export const SelectRoute = ({ children }) => {
   if (roleLoading) return <div>Loading...</div>;
   if (roleError) return <div>Role Error: {roleError}</div>;
 
+  if (!role) {
+    return <div>Loading your role information...</div>;
+  }
+
   const roleToPath = {
     admin: "/admin",
     product_manager: "/product-manager",
     user: "/user",
   };
 
-  const allowedPath = roleToPath[role] || "/";
+  const allowedPath = roleToPath[role];
 
-  if (location.pathname !== allowedPath) {
+  if (!location.pathname.startsWith(allowedPath)) {
     return <Navigate to={allowedPath} replace />;
   }
 

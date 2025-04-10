@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
 import { getProducts, insertProduct, deleteProduct } from "../hooks/Products";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProdManPage = () => {
   const { session, signOutUser } = userAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
+  const { role, roleError, roleLoading } = useUserRole();
 
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const { products, productError, productLoading } = getProducts(refreshTrigger);
+  const { products, productError, productLoading } = getProducts();
 
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
 
   const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Handler for signing out the user
   const handleSignOut = async (e) => {
@@ -34,7 +36,6 @@ const ProdManPage = () => {
   const handleSettings = async (e) => {
     e.preventDefault();
     try {
-      await signOutUser();
       navigate("/settings");
     } catch (error) {
       console.error("Error signing out:", error.message);
@@ -78,7 +79,8 @@ const ProdManPage = () => {
         setProductName("");
         setProductDescription("");
         setProductQuantity("");
-        setRefreshTrigger((prev) => prev + 1);
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+        setSuccess("Product added successfully.");
       } else {
         setMessage("Error: " + result.error);
       }
@@ -92,8 +94,8 @@ const ProdManPage = () => {
     try {
       const result = await deleteProduct(id);
       if (result.success) {
-        setRefreshTrigger((prev) => prev + 1);
-        setMessage("Product deleted successfully.");
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+        setSuccess("Product deleted successfully.");
       } else {
         setMessage("Error: " + result.error);
       }
@@ -127,13 +129,20 @@ const ProdManPage = () => {
           Settings
         </button>
       </div>
-
+      {success && (
+        <div className="bg-green-100 text-green-700 p-4 rounded mb-4">
+          {success}
+        </div>
+      )}
       {/* Product Catalogue Section */}
       <div className="bg-white p-4 shadow-md rounded-md mb-8 text-black">
         <h2 className="text-xl font-semibold mb-4">Product Catalogue</h2>
 
         {/* Form to add a new product */}
-        <form onSubmit={handleAddProduct} className="flex flex-col md:flex-row items-center gap-2 mb-4">
+        <form
+          onSubmit={handleAddProduct}
+          className="flex flex-col md:flex-row items-center gap-2 mb-4"
+        >
           <input
             type="text"
             placeholder="Name"

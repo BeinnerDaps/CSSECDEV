@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
-import { getPosts } from "../hooks/Posts";
+
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -9,7 +9,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { posts, postError, postLoading } = getPosts();
 
   const handleSignOut = async (e) => {
     e.preventDefault();
@@ -35,14 +34,11 @@ const Dashboard = () => {
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
-  if (postLoading) return <p>Loading posts...</p>;
-
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
-  if (postError) return <p>Error fetching posts: {postError}</p>;
 
   return (
     <div>
-      <h1>Customer Page</h1>
+      <h1>Dashboard Page</h1>
       <h1>Welcome, {session?.user?.email}</h1>
       <h2>Role: {role ? role : "Loading..."}</h2>
 

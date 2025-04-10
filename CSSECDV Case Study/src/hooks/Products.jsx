@@ -1,37 +1,28 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../api/supabaseClient";
 import { userAuth } from "../context/Authcontext";
 
-export const getProducts = (refreshTrigger) => {
+export const getProducts = () => {
   const { session } = userAuth();
-  const [products, setProducts] = useState(null);
-  const [productError, setError] = useState(null);
-  const [productLoading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!session || !session.user) {
-      setLoading(false);
-      return;
-    }
+  const {
+    data: products,
+    error,
+    isLoading: productLoading,
+  } = useQuery({
+    queryKey: ["products", session?.user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) throw error;
+      return data;
+    },
+    // Only run if there is a valid session with a user.
+    enabled: Boolean(session && session.user),
+    // Optionally, set staleTime so that data is considered fresh (e.g., 5 minutes).
+    staleTime: 1000 * 60 * 5,
+  });
 
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase.from("products").select("*");
-        if (error) throw error;
-        setProducts(data);
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching products:", error.message);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [session, refreshTrigger]);
-
+  const productError = error ? error.message : null;
   return { products, productError, productLoading };
 };
 

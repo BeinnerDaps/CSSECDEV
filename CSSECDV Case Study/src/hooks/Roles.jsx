@@ -1,39 +1,32 @@
-import { useEffect, useState } from "react";
 import { supabase } from "../api/supabaseClient";
 import { userAuth } from "../context/Authcontext";
+import { useQuery } from "@tanstack/react-query";
 
-export const useUserRole = (user_id) => {
+export const useUserRole = () => {
   const { session } = userAuth();
-  const [role, setRole] = useState(null);
-  const [roleError, setError] = useState(null);
-  const [roleLoading, setLoading] = useState(true);
+  const user_id = session?.user?.id;
 
-  useEffect(() => {
-    if (!session || !session.user || !user_id) {
-      setLoading(false);
-      return;
-    }
+  const {
+    data: role,
+    error,
+    isLoading: roleLoading,
+  } = useQuery({
+    queryKey: ["userRole", user_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", user_id)
+        .single();
+      if (error) throw error;
+      return data.role;
+    },
+    // Only run if session, session.user, and user_id exist.
+    enabled: !!(session && session.user && user_id),
+    staleTime: Infinity,
+  });
 
-    const fetchUserRole = async (user_id) => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", user_id)
-          .single();
-        if (error) throw error;
-        setRole(data.role);
-      } catch (error) {
-        console.error("Error fetching user role:", error.message);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserRole(user_id);
-  }, [session, user_id]);
+  const roleError = error ? error.message : null;
 
   return { role, roleError, roleLoading };
 };

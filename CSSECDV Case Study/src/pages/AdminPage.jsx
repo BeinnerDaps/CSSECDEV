@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
-import { getPosts } from "../hooks/Posts";
 import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
@@ -24,7 +23,6 @@ const AdminPage = () => {
   const handleSettings = async (e) => {
     e.preventDefault();
     try {
-      await signOutUser();
       navigate("/settings");
     } catch (error) {
       console.error("Error signing out:", error.message);
@@ -32,10 +30,7 @@ const AdminPage = () => {
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
-  if (postLoading) return <p>Loading posts...</p>;
-
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
-  if (postError) return <p>Error fetching posts: {postError}</p>;
 
   return (
     <div>

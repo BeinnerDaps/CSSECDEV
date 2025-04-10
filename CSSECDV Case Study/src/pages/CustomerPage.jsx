@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
-import { getPosts } from "../hooks/Posts";
 import { useNavigate } from "react-router-dom";
 
 const CustomerPage = () => {
@@ -9,7 +8,6 @@ const CustomerPage = () => {
   const navigate = useNavigate();
 
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { posts, postError, postLoading } = getPosts();
 
   const handleSignOut = async (e) => {
     e.preventDefault();
@@ -31,10 +29,7 @@ const CustomerPage = () => {
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
-  if (postLoading) return <p>Loading posts...</p>;
-
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
-  if (postError) return <p>Error fetching posts: {postError}</p>;
 
   return (
     <div>
