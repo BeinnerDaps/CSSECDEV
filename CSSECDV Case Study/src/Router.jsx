@@ -5,7 +5,7 @@ import SignIn from "./component/SignIn";
 import ForgotPassword from "./component/ForgotPassword";
 import ResetPassword from "./component/ResetPassword";
 import ChangePassword from "./component/ChangePassword";
-import SecurityQuestions from "./component/SecurityQuestions";
+import ReauthenticateForSecurity from "./component/SecurityQuestions";
 
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
     path: "/security-questions",
     element: (
       <PrivateRoute>
-        <SecurityQuestions />
+        <ReauthenticateForSecurity />
       </PrivateRoute>
     ),
   },

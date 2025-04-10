@@ -77,26 +77,24 @@ const ForgotPassword = () => {
             </div>
           </form>
 
-          {success && (
-            <div className="mt-3 text-center">
-              <button
-                onClick={() => handleNavigation("/signin")}
-                disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
-              >
-                Return to Sign in
-              </button>
-            </div>
-          )}
+          <div className="mt-3 text-center">
+            <button
+              onClick={() => handleNavigation("/signin")}
+              disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+            >
+              Return to Sign in
+            </button>
+          </div>
 
           <div className="mt-3 text-center">
             <p className="text-sm text-gray-400">
-              Already have an account?{" "}
+              Try another way:{" "}
               <Link
                 to="/signin"
                 className="text-purple-400 hover:text-purple-300 font-medium"
               >
-                Sign In
+                Answer Security Questions
               </Link>
             </p>
           </div>

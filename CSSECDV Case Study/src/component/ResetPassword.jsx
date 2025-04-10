@@ -128,7 +128,7 @@ const ResetPassword = () => {
               <button
                 onClick={() => handleNavigation("/signin")}
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50 disabled:cursor-default"
               >
                 Return to Sign in
               </button>

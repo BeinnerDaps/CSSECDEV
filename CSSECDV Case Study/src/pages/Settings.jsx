@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
 
   const handleNavigation = (path) => {
     navigate(path);
