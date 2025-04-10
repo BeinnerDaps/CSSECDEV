@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
-import { getPosts } from "../hooks/Posts";
+import { getProducts, insertProducts } from "../hooks/Products";
 import { useNavigate } from "react-router-dom";
 
 const ProdManPage = () => {
@@ -9,7 +9,7 @@ const ProdManPage = () => {
   const navigate = useNavigate();
   
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { posts, postError, postLoading } = getPosts();
+  const { products, productError, productLoading } = getProducts();
 
   // New state variables for product catalogue
   const [productName, setProductName] = useState('');
@@ -60,21 +60,15 @@ const ProdManPage = () => {
       alert("Description cannot be empty.");
       return;
     }
-
-    // Create a new product entry
-    const newProduct = {
-      id: Date.now(), // simple unique ID; consider using a library like uuid for more robustness
-      name: productName,
-      description: productDescription,
-      quantity: quantityInt,
-    };
-
-    // Update catalogue and clear the input fields
-    setProductCatalog([...productCatalog, newProduct]);
-    setProductName('');
-    setProductDescription('');
-    setProductQuantity('');
   };
+
+  try{
+    const insertProduct = await insertProducts(productName, productDescription, productQuantity)
+  } catch(){
+
+  } finally {
+
+  }
 
   // Delete product from catalogue list
   const handleDeleteProduct = (id) => {
@@ -82,9 +76,9 @@ const ProdManPage = () => {
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
-  if (postLoading) return <p>Loading posts...</p>;
+  if (productLoading) return <p>Loading posts...</p>;
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
-  if (postError) return <p>Error fetching posts: {postError}</p>;
+  if (productError) return <p>Error fetching posts: {productError}</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -112,7 +106,7 @@ const ProdManPage = () => {
         <h2 className="text-xl font-semibold mb-4">Product Catalogue</h2>
 
         {/* Form to add a new product */}
-        <div className="flex flex-col md:flex-row items-center gap-2 mb-4">
+        <form onClick={handleAddProduct} className="flex flex-col md:flex-row items-center gap-2 mb-4">
           <input
             type="text"
             placeholder="Name"
@@ -136,12 +130,12 @@ const ProdManPage = () => {
             onChange={(e) => setProductQuantity(e.target.value)}
           />
           <button
-            onClick={handleAddProduct}
+            type = "submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
             Add
           </button>
-        </div>
+        </form>
 
         {/* Catalogue table list */}
         <table className="w-full border-collapse">
@@ -154,7 +148,7 @@ const ProdManPage = () => {
             </tr>
           </thead>
           <tbody>
-            {productCatalog.map((product) => (
+            {products.map((product) => (
               <tr key={product.id} className="border-b">
                 <td className="p-2">{product.name}</td>
                 <td className="p-2">{product.description}</td>
@@ -169,7 +163,7 @@ const ProdManPage = () => {
                 </td>
               </tr>
             ))}
-            {productCatalog.length === 0 && (
+            {products.length === 0 && (
               <tr>
                 <td colSpan="4" className="text-center p-4 text-gray-500">
                   No products yet. Add something above!
