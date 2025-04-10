@@ -51,6 +51,11 @@ const ProdManPage = () => {
       return;
     }
 
+    // Check if quantity input is more than 10 digits
+    if (productQuantity.length > 10) {
+      alert("Quantity cannot exceed 10 digits.");
+      return;
+    }
     const quantityInt = parseInt(productQuantity, 10);
     if (isNaN(quantityInt) || quantityInt < 1) {
       alert("Quantity must be a positive integer greater than 0.");
@@ -63,7 +68,11 @@ const ProdManPage = () => {
     }
 
     try {
-      const result = await insertProduct(productName, productDescription, quantityInt);
+      const result = await insertProduct(
+        productName,
+        productDescription,
+        quantityInt
+      );
 
       if (result.success) {
         setProductName("");
@@ -128,6 +137,7 @@ const ProdManPage = () => {
           <input
             type="text"
             placeholder="Name"
+            maxLength="50"
             className="border border-gray-300 rounded p-2 w-full md:w-auto"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
@@ -135,14 +145,16 @@ const ProdManPage = () => {
           <input
             type="text"
             placeholder="Description"
+            maxLength="50"
             className="border border-gray-300 rounded p-2 w-full md:w-auto"
             value={productDescription}
             onChange={(e) => setProductDescription(e.target.value)}
           />
           <input
-            type="number"
-            min="1"
+            type="text"
             placeholder="Quantity"
+            inputMode="numeric"
+            maxLength="10"
             className="border border-gray-300 rounded p-2 w-full md:w-auto"
             value={productQuantity}
             onChange={(e) => setProductQuantity(e.target.value)}
