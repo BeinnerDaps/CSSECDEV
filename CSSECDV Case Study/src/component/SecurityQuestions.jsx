@@ -32,7 +32,6 @@ const ReauthenticateForSecurity = () => {
       }
     } catch (error) {
       setError(error.message);
-      setAttempts((prev) => prev + 1);
     } finally {
       setLoading(false);
     }
@@ -41,36 +40,42 @@ const ReauthenticateForSecurity = () => {
   // Render the reauthentication form first.
   if (!reauthenticated) {
     return (
-      <div>
-        <h2>Reauthenticate</h2>
-        <p>Please enter your password to access your security questions.</p>
-        <form onSubmit={handleReauthenticate}>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white rounded-md my-2 w-1/6"
-            disabled={loading}
-          >
-            Submit
-          </button>
-          <button
-            type="button"
-            disabled={loading}
-            className="bg-blue-500 text-white rounded-md my-2 w-1/6"
-            onClick={() => {
-              navigate("/settings");
-            }}
-          >
-            Go Back
-          </button>
+      <div className="flex flex-col min-h-screen bg-gray-800 text-white p-4">
+        <h2 className="text-2xl font-bold text-white mb-4">Reauthenticate</h2>
+        <p className="text-gray-300 mb-4">Please enter your password to access your security questions.</p>
+        <form onSubmit={handleReauthenticate} className="flex flex-col max-w-2/5 space-y-4">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter your password"
+            />
+          </div>
+          <div className="space-x-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md w-full hover:bg-blue-600"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md w-full hover:bg-blue-600"
+              onClick={() => navigate("/settings")}
+            >
+              Go Back
+            </button>
+          </div>
         </form>
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       </div>
     );
   }
@@ -138,13 +143,13 @@ const SecurityQuestions = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-800 text-white p-4">
-      <h2 className="text-2xl font-bold">Answer Your Security Questions</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="my-4 bg-gray-500 p-4 rounded-md max-w-md">
-          <p className="mb-2">
+      <h2 className="text-2xl font-bold text-white mb-4">Answer Your Security Questions</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col max-w-2/5 space-y-4">
+        <div className="my-4 bg-gray-700 p-4 rounded-md">
+          <p className="mb-2 text-gray-300">
             <strong>Question 1:</strong> {questions.security_question1}
           </p>
-          <label htmlFor="security_answer1">
+          <label htmlFor="security_answer1" className="block text-sm font-medium text-gray-300 mb-1">
             Answer 1:
             <input
               type="text"
@@ -153,16 +158,16 @@ const SecurityQuestions = () => {
               value={answers.security_answer1}
               onChange={handleInputChange}
               required
-              className="border border-gray-300 rounded-md py-2 px-4 text-white ml-2"
+              className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </label>
         </div>
 
-        <div className="my-4 bg-gray-500 p-4 rounded-md max-w-md">
-          <p className="mb-2">
+        <div className="my-4 bg-gray-700 p-4 rounded-md">
+          <p className="mb-2 text-gray-300">
             <strong>Question 2:</strong> {questions.security_question2}
           </p>
-          <label htmlFor="security_answer2">
+          <label htmlFor="security_answer2" className="block text-sm font-medium text-gray-300 mb-1">
             Answer 2:
             <input
               type="text"
@@ -171,15 +176,16 @@ const SecurityQuestions = () => {
               value={answers.security_answer2}
               onChange={handleInputChange}
               required
-              className="border border-gray-300 rounded-md py-2 px-4 text-white ml-2"
+              className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </label>
         </div>
-        <div className="flex items-center space-x-2 mt-4">
+
+        <div className="space-x-2">
           <button
             type="submit"
             disabled={loading || answered}
-            className="bg-blue-500 text-white rounded-md w-1/6 disabled:opacity-50 cursor-pointer"
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md w-full hover:bg-blue-600 disabled:opacity-50"
           >
             Submit Answers
           </button>
@@ -187,7 +193,7 @@ const SecurityQuestions = () => {
           <button
             type="button"
             disabled={loading}
-            className="bg-blue-500 text-white rounded-md my-2 w-1/6"
+            className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md w-full hover:bg-blue-600"
             onClick={() => navigate("/settings")}
           >
             Go Back
@@ -195,7 +201,7 @@ const SecurityQuestions = () => {
         </div>
       </form>
 
-      {message && <p>{message}</p>}
+      {message && <p className="text-center mt-4">{message}</p>}
     </div>
   );
 };
