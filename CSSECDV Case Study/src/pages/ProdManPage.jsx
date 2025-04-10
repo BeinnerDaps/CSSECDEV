@@ -104,6 +104,11 @@ const ProdManPage = () => {
     }
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+
   if (roleLoading) return <p>Loading user role...</p>;
   if (productLoading) return <p>Loading products...</p>;
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
@@ -116,6 +121,11 @@ const ProdManPage = () => {
       <h3 className="text-md mb-4">Role: {role ? role : "Loading..."}</h3>
 
       <div className="flex gap-4 mb-6">
+
+      <button onClick={() => handleNavigation("/dashboard")}>
+            Dashboard
+          </button>
+
         <button
           onClick={handleSignOut}
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"

@@ -10,6 +10,9 @@ const Settings = () => {
 
   return (
     <div>
+      <button onClick={() => handleNavigation("/dashboard")}>
+            Dashboard
+      </button>
       <button onClick={() => handleNavigation("/security-questions")}>
         Security Questions
       </button>

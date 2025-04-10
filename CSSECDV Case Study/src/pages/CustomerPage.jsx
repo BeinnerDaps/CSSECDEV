@@ -28,6 +28,10 @@ const CustomerPage = () => {
     }
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   if (roleLoading) return <p>Loading user role...</p>;
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
 
@@ -38,6 +42,12 @@ const CustomerPage = () => {
       <h2>Role: {role ? role : "Loading..."}</h2>
 
       <div>
+          <button onClick={() => handleNavigation("/dashboard")}>
+            Dashboard
+          </button>
+        </div>
+
+      <div>
         <button onClick={handleSignOut}>Sign Out</button>
       </div>
 
@@ -45,7 +55,7 @@ const CustomerPage = () => {
         <button onClick={handleSettings}>Settings</button>
       </div>
 
-      <pre>{JSON.stringify(posts, null, 2)}</pre>
+      <pre>{JSON.stringify(null, 2)}</pre>
     </div>
   );
 };
