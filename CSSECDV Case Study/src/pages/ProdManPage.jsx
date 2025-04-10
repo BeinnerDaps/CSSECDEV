@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
-import { getProducts, insertProducts } from "../hooks/Products";
+import { getProducts, insertProduct, deleteProduct } from "../hooks/Products";
 import { useNavigate } from "react-router-dom";
 
 const ProdManPage = () => {
   const { session, signOutUser } = userAuth();
   const navigate = useNavigate();
-  
-  const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { products, productError, productLoading } = getProducts();
 
-  // New state variables for product catalogue
-  const [productName, setProductName] = useState('');
-  const [productDescription, setProductDescription] = useState('');
-  const [productQuantity, setProductQuantity] = useState(''); // Quantity input state
-  const [productCatalog, setProductCatalog] = useState([]);
+  const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
+
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const { products, productError, productLoading } =
+    getProducts(refreshTrigger);
+
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [productQuantity, setProductQuantity] = useState("");
+
+  const [message, setMessage] = useState("");
 
   // Handler for signing out the user
   const handleSignOut = async (e) => {
@@ -40,39 +43,57 @@ const ProdManPage = () => {
   };
 
   // Add product to catalogue list with data validation
-  const handleAddProduct = () => {
-    // Validate product name: should only contain letters A-Z or a-z
+  const handleAddProduct = async () => {
     const nameRegex = /^[A-Za-z]+$/;
     if (!nameRegex.test(productName)) {
       alert("Name must contain alphabet characters (A-Z and a-z) only.");
       return;
     }
 
-    // Validate quantity: must be a positive integer (minimum 1)
     const quantityInt = parseInt(productQuantity, 10);
     if (isNaN(quantityInt) || quantityInt < 1) {
       alert("Quantity must be a positive integer greater than 0.");
       return;
     }
 
-    // Optional: Validate that description is not empty (if required)
     if (!productDescription.trim()) {
       alert("Description cannot be empty.");
       return;
     }
+
+    try {
+      const result = await insertProduct(
+        productName,
+        productDescription,
+        quantityInt
+      );
+
+      if (result.success) {
+        setProductName("");
+        setProductDescription("");
+        setProductQuantity("");
+        setRefreshTrigger((prev) => prev + 1);
+      } else {
+        setMessage("Error:", result.error);
+      }
+    } catch (error) {
+      console.error("Error adding product:", error.message);
+    }
   };
 
-  try{
-    const insertProduct = await insertProducts(productName, productDescription, productQuantity)
-  } catch(){
-
-  } finally {
-
-  }
-
   // Delete product from catalogue list
-  const handleDeleteProduct = (id) => {
-    setProductCatalog(productCatalog.filter(product => product.id !== id));
+  const handleDeleteProduct = async (id) => {
+    try {
+      const result = await deleteProduct(id);
+      if (result.success) {
+        setRefreshTrigger((prev) => prev + 1);
+        setMessage("Product deleted successfully.");
+      } else {
+        setMessage("Error:", result.error);
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error.message);
+    }
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
@@ -87,14 +108,14 @@ const ProdManPage = () => {
       <h3 className="text-md mb-4">Role: {role ? role : "Loading..."}</h3>
 
       <div className="flex gap-4 mb-6">
-        <button 
-          onClick={handleSignOut} 
+        <button
+          onClick={handleSignOut}
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
           Sign Out
         </button>
-        <button 
-          onClick={handleSettings} 
+        <button
+          onClick={handleSettings}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Settings
@@ -106,7 +127,10 @@ const ProdManPage = () => {
         <h2 className="text-xl font-semibold mb-4">Product Catalogue</h2>
 
         {/* Form to add a new product */}
-        <form onClick={handleAddProduct} className="flex flex-col md:flex-row items-center gap-2 mb-4">
+        <form
+          onSubmit={handleAddProduct}
+          className="flex flex-col md:flex-row items-center gap-2 mb-4"
+        >
           <input
             type="text"
             placeholder="Name"
@@ -130,7 +154,7 @@ const ProdManPage = () => {
             onChange={(e) => setProductQuantity(e.target.value)}
           />
           <button
-            type = "submit"
+            type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
             Add
@@ -150,7 +174,7 @@ const ProdManPage = () => {
           <tbody>
             {products.map((product) => (
               <tr key={product.id} className="border-b">
-                <td className="p-2">{product.name}</td>
+                <td className="p-2">{product.prod_name}</td>
                 <td className="p-2">{product.description}</td>
                 <td className="p-2">{product.quantity}</td>
                 <td className="p-2 text-center">
