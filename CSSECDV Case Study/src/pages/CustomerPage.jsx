@@ -114,13 +114,28 @@ const CustomerPage = () => {
         ) : (
           <ul>
             {cart.map((item, index) => (
-              <li key={index}>{item.prod_name}</li>
-            ))}
-          </ul>
-        )}
-      </div>
+              <li key={item.id} className="flex justify-between items-center">
+              <span>{item.prod_name}</span>
+              <button
+                onClick={() => handleRemoveFromCart(item.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </li>
+
+/* if wish for no remove, delete all li and replace with this:
+
+ <li key={index}>{item.prod_name}</li>
+ 
+ */
+
+          ))}
+        </ul>
+      )}
     </div>
-  );
+  </div>
+);
 };
 
 export default CustomerPage;
