@@ -122,7 +122,8 @@ const ProdManPage = () => {
 
       <div className="flex gap-4 mb-6">
 
-      <button onClick={() => handleNavigation("/dashboard")}>
+      <button onClick={() => handleNavigation("/dashboard")}
+        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
             Dashboard
           </button>
 
