@@ -11,8 +11,7 @@ const ProdManPage = () => {
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const { products, productError, productLoading } =
-    getProducts(refreshTrigger);
+  const { products, productError, productLoading } = getProducts(refreshTrigger);
 
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -42,8 +41,10 @@ const ProdManPage = () => {
     }
   };
 
-  // Add product to catalogue list with data validation
-  const handleAddProduct = async () => {
+  // Add product to catalogue list with data validation and preventing default form submission
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+
     const nameRegex = /^[A-Za-z]+$/;
     if (!nameRegex.test(productName)) {
       alert("Name must contain alphabet characters (A-Z and a-z) only.");
@@ -62,11 +63,7 @@ const ProdManPage = () => {
     }
 
     try {
-      const result = await insertProduct(
-        productName,
-        productDescription,
-        quantityInt
-      );
+      const result = await insertProduct(productName, productDescription, quantityInt);
 
       if (result.success) {
         setProductName("");
@@ -74,7 +71,7 @@ const ProdManPage = () => {
         setProductQuantity("");
         setRefreshTrigger((prev) => prev + 1);
       } else {
-        setMessage("Error:", result.error);
+        setMessage("Error: " + result.error);
       }
     } catch (error) {
       console.error("Error adding product:", error.message);
@@ -89,7 +86,7 @@ const ProdManPage = () => {
         setRefreshTrigger((prev) => prev + 1);
         setMessage("Product deleted successfully.");
       } else {
-        setMessage("Error:", result.error);
+        setMessage("Error: " + result.error);
       }
     } catch (error) {
       console.error("Error deleting product:", error.message);
@@ -97,9 +94,9 @@ const ProdManPage = () => {
   };
 
   if (roleLoading) return <p>Loading user role...</p>;
-  if (productLoading) return <p>Loading posts...</p>;
+  if (productLoading) return <p>Loading products...</p>;
   if (roleError) return <p>Error fetching user role: {roleError}</p>;
-  if (productError) return <p>Error fetching posts: {productError}</p>;
+  if (productError) return <p>Error fetching products: {productError}</p>;
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -127,10 +124,7 @@ const ProdManPage = () => {
         <h2 className="text-xl font-semibold mb-4">Product Catalogue</h2>
 
         {/* Form to add a new product */}
-        <form
-          onSubmit={handleAddProduct}
-          className="flex flex-col md:flex-row items-center gap-2 mb-4"
-        >
+        <form onSubmit={handleAddProduct} className="flex flex-col md:flex-row items-center gap-2 mb-4">
           <input
             type="text"
             placeholder="Name"
@@ -160,6 +154,9 @@ const ProdManPage = () => {
             Add
           </button>
         </form>
+
+        {/* Display a message (e.g., error or deletion confirmation) */}
+        {message && <p className="mb-4 text-red-500">{message}</p>}
 
         {/* Catalogue table list */}
         <table className="w-full border-collapse">
