@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div>
-      <button>Reset Password</button>
+      <button onClick={() => handleNavigation("/security-questions")}>
+        Security Questions
+      </button>
+      <button onClick={() => handleNavigation("/change-password")}>
+        Reset Password
+      </button>
     </div>
   );
 };

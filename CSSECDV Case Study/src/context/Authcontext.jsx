@@ -36,24 +36,6 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   // Sign in user
-  // const signInUser = async (email, password) => {
-  //   try {
-  //     const { data, error } = await supabase.auth.signInWithPassword({
-  //       email: email,
-  //       password: password,
-  //     });
-
-  //     if (error) {
-  //       console.error("Error signing in:", error.message);
-  //       return { success: false, error: error.message };
-  //     }
-  //     return { success: true, data };
-  //   } catch (error) {
-  //     console.error("Error signing in:", error.message);
-  //     return { success: false, error: error.message };
-  //   }
-  // };
-
   const signInUser = async (email, password) => {
     try {
       const now = new Date();
@@ -151,6 +133,34 @@ export const AuthContextProvider = ({ children }) => {
     return { success: true };
   };
 
+  const getSecurityQuestions = async (user_id) => {
+    const { data, error } = await supabase
+      .from("user_security")
+      .select("security_question1, security_question2")
+      .eq("user_id", user_id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching security questions:", error.message);
+      return { success: false, error };
+    }
+    return { success: true, data };
+  };
+
+  const setSecurityAnswers = async (user_id, answer1, answer2) => {
+    const { error } = await supabase.from("user_security").upsert({
+      user_id,
+      security_answer1: answer1,
+      security_answer2: answer2,
+    });
+
+    if (error) {
+      console.error("Error setting security questions:", error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  };
+
   // Return the context provider with the session and auth functions
   return (
     <AuthContext.Provider
@@ -162,6 +172,8 @@ export const AuthContextProvider = ({ children }) => {
         sendPasswordRecovery,
         updatePassword,
         setTemporarySession,
+        getSecurityQuestions,
+        setSecurityAnswers,
       }}
     >
       {children}

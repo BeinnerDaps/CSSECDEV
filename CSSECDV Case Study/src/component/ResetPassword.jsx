@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate, Navigate } from "react-router-dom";
 import { userAuth } from "../context/Authcontext";
 
 const ResetPassword = () => {
   const { setTemporarySession, updatePassword } = userAuth();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("access_token");
   const type = searchParams.get("type");
 
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const setupSession = async () => {
@@ -22,6 +25,7 @@ const ResetPassword = () => {
           setError("Failed to set temporary session.");
         }
       }
+      setLoading(false);
     };
     setupSession();
   }, [token, type, setTemporarySession]);
@@ -33,9 +37,14 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const result = await updatePassword(password);
-      if (result.success) {
-        setMessage("Password changed successfully!");
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match.");
+      } else {
+        const result = await updatePassword(password);
+        if (result.success) {
+          setMessage("Password changed successfully!");
+          setSuccess(true);
+        }
       }
     } catch (error) {
       setError(error.message);
@@ -43,6 +52,19 @@ const ResetPassword = () => {
       setLoading(false);
     }
   };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  // Redirect if token is not present or not valid
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center">
@@ -70,6 +92,23 @@ const ResetPassword = () => {
               />
             </div>
 
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Confirm New Password"
+              />
+            </div>
+
             {error && <div className="text-center text-red-500">{error}</div>}
             {message && (
               <div className="text-center text-green-500">{message}</div>
@@ -77,13 +116,24 @@ const ResetPassword = () => {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || success}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
               >
                 Change Password
               </button>
             </div>
           </form>
+          {success && (
+            <div className="mt-3 text-center">
+              <button
+                onClick={() => handleNavigation("/signin")}
+                disabled={loading}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
+              >
+                Return to Sign in
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
