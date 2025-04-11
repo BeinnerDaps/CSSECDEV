@@ -48,6 +48,7 @@ export const AuthContextProvider = ({ children }) => {
 
       if (attemptError && attemptError.code !== "PGRST116") {
         console.error("Server error:", attemptError.message);
+        throw attemptError;
       }
 
       const locked_until = attemptData?.locked_until;
@@ -56,7 +57,7 @@ export const AuthContextProvider = ({ children }) => {
         const error = new Error(
           "Account locked. Try again in (" + remaining + "s)"
         );
-        return { success: false, error: error.message };
+        throw error;
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -68,9 +69,13 @@ export const AuthContextProvider = ({ children }) => {
         let failedAttempts = attemptData ? attemptData.failed_attempts + 1 : 1;
         let lockedUntil = null;
         if (failedAttempts >= 5) {
-          const timeout = 1; // Lock for 1 minute
+          const timeout = 1;
           lockedUntil = new Date(now.getTime() + timeout * 60 * 1000);
-          failedAttempts = 0; // Reset failed attempts after lock
+          failedAttempts = 0;
+
+          if (session) {
+            await supabase.auth.signOut();
+          }
         }
 
         await supabase.from("login_event_logs").upsert({
@@ -79,8 +84,7 @@ export const AuthContextProvider = ({ children }) => {
           locked_until: lockedUntil,
         });
 
-        console.error("Error signing in:", error.message);
-        return { success: false, error: error.message };
+        throw error;
       }
 
       await supabase.from("login_event_logs").delete().eq("email", email);
@@ -167,6 +171,32 @@ export const AuthContextProvider = ({ children }) => {
     return { success: true };
   };
 
+  const checkSecurityAnswers = async (user_id, answer1, answer2) => {
+    const { data, error } = await supabase
+      .from("user_security")
+      .select("security_answer1, security_answer2")
+      .eq("user_id", user_id)
+      .single();
+
+    if (error) {
+      console.error("Error checking security answers:", error.message);
+      return { success: false, error: error.message };
+    }
+
+    if (!data) {
+      return { success: false, error: "No security answers found" };
+    }
+
+    if (
+      data.security_answer1 !== answer1 ||
+      data.security_answer2 !== answer2
+    ) {
+      return { success: false, error: "Invalid security answers" };
+    }
+
+    return { success: true };
+  };
+
   // Return the context provider with the session and auth functions
   return (
     <AuthContext.Provider
@@ -180,6 +210,7 @@ export const AuthContextProvider = ({ children }) => {
         setTemporarySession,
         getSecurityQuestions,
         setSecurityAnswers,
+        checkSecurityAnswers,
       }}
     >
       {children}

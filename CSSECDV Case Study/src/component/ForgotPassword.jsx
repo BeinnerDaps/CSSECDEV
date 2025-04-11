@@ -86,18 +86,6 @@ const ForgotPassword = () => {
               Return to Sign in
             </button>
           </div>
-
-          <div className="mt-3 text-center">
-            <p className="text-sm text-gray-400">
-              Try another way:{" "}
-              <Link
-                to="/signin"
-                className="text-purple-400 hover:text-purple-300 font-medium"
-              >
-                Answer Security Questions
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

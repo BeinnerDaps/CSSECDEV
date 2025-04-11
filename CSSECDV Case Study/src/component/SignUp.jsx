@@ -26,6 +26,7 @@ const SignUp = () => {
 
     try {
       const result = await signUpNewUser(username, email, password);
+      if (result.error) throw result.error;
 
       if (result.success) {
         navigate("/dashboard");
