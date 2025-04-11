@@ -202,15 +202,9 @@ export const AuthContextProvider = ({ children }) => {
         .eq("user_id", user_id)
         .single();
 
-      if (error) {
-        await insertLog(session?.user?.id, "Error No security answers found");
-        throw error;
-      }
+      if (error) throw error;
 
-      if (!data) {
-        await insertLog(session?.user?.id, "Error No security answers found");
-        throw new Error("No security answers found");
-      }
+      if (!data) throw new Error("No security answers found");
 
       if (
         data.security_answer1 !== answer1 ||
@@ -219,9 +213,10 @@ export const AuthContextProvider = ({ children }) => {
         throw new Error("Security answers do not match");
       }
 
+      await insertLog(session?.user?.id, "security answers found true");
       return { success: true };
     } catch (error) {
-      await insertLog(session?.user?.id, "Error checking security answers");
+      await insertLog(session?.user?.id, error.message);
       return { success: false, error };
     }
   };

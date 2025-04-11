@@ -35,7 +35,6 @@ export const insertLog = async (userId, message) => {
       .insert({ user_id: userId, message })
       .single();
     if (error) throw error;
-    console.log("Log inserted successfully:", data);
     return { success: true, data };
   } catch (error) {
     console.error("Error inserting log:", error.message);
