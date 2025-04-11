@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { userAuth } from "../context/Authcontext";
+import { insertLog } from "../hooks/Logs";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -21,12 +22,14 @@ const SignUp = () => {
     // Gmail-only validation
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!gmailRegex.test(email)) {
+      await insertLog(session?.user?.id, "Invalid Email Address");
       setError("Only Gmail addresses are allowed.");
       setLoading(false);
       return;
     }
 
     if (confirmPassword !== password) {
+      await insertLog(session?.user?.id, "Invalid Password Match");
       setError("Passwords do not match.");
       setLoading(false);
       return;
@@ -37,9 +40,11 @@ const SignUp = () => {
       if (result.error) throw result.error;
 
       if (result.success) {
+        await insertLog(session?.user?.id, "User Signed Up Successfully");
         navigate("/dashboard");
       }
     } catch (error) {
+      await insertLog(session?.user?.id, "Error User invalid sign up");
       setError(error.message);
     } finally {
       setLoading(false);
