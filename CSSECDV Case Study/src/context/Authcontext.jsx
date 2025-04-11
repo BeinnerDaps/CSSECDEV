@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../api/supabaseClient";
+import { insertLog } from "../hooks/Logs";
 
 const host = import.meta.env.VITE_LOCALHOST;
 const port = import.meta.env.VITE_PORT;
@@ -29,9 +30,11 @@ export const AuthContextProvider = ({ children }) => {
     });
 
     if (error) {
+      await insertLog(session?.user?.id, "Error signing up");
       console.error("Error signing up:", error.message);
       return { success: false, error };
     }
+    await insertLog(session?.user?.id, "Successfully signed up");
     return { success: true, data };
   };
 
@@ -47,12 +50,14 @@ export const AuthContextProvider = ({ children }) => {
         .single();
 
       if (attemptError && attemptError.code !== "PGRST116") {
+        await insertLog(session?.user?.id, "Attempt Error");
         console.error("Server error:", attemptError.message);
         throw attemptError;
       }
 
       const locked_until = attemptData?.locked_until;
       if (locked_until && new Date(locked_until) > now) {
+        await insertLog(session?.user?.id, "Attempt Error: Locked Account");
         const remaining = Math.ceil((new Date(locked_until) - now) / 1000);
         const error = new Error(
           "Account locked. Try again in (" + remaining + "s)"
@@ -91,6 +96,7 @@ export const AuthContextProvider = ({ children }) => {
 
       return { success: true, data: data };
     } catch (error) {
+      await insertLog(session?.user?.id, "Error Signing In");
       console.error("Error signing in:", error.message);
       return { success: false, error: error.message };
     }
@@ -111,9 +117,11 @@ export const AuthContextProvider = ({ children }) => {
     });
 
     if (error) {
+      await insertLog(session?.user?.id, "Error sending password recovery email");
       console.error("Error sending password recovery email:", error.message);
       return { success: false, error };
     }
+    await insertLog(session?.user?.id, "Successfully sent password recovery email");
     return { success: true };
   };
 
@@ -125,9 +133,10 @@ export const AuthContextProvider = ({ children }) => {
       });
 
       if (error) throw error;
-
+      await insertLog(session?.user?.id, "Successfully updated password");
       return { success: true };
     } catch (error) {
+      await insertLog(session?.user?.id, "Error updating password");
       console.error("Error updating password:", error);
       return { success: false, error: error.details || error.message };
     }
@@ -151,9 +160,11 @@ export const AuthContextProvider = ({ children }) => {
       .single();
 
     if (error) {
+      await insertLog(session?.user?.id, "Error fetching security questions");
       console.error("Error fetching security questions:", error.message);
       return { success: false, error };
     }
+    await insertLog(session?.user?.id, "Successfully fetched security questions");
     return { success: true, data };
   };
 
@@ -165,9 +176,11 @@ export const AuthContextProvider = ({ children }) => {
     });
 
     if (error) {
+      await insertLog(session?.user?.id, "Error setting security questions");
       console.error("Error setting security questions:", error.message);
       return { success: false, error };
     }
+    await insertLog(session?.user?.id, "Successfully set security questions");
     return { success: true };
   };
 
@@ -179,11 +192,13 @@ export const AuthContextProvider = ({ children }) => {
       .single();
 
     if (error) {
+      await insertLog(session?.user?.id, "Error checking security answers");
       console.error("Error checking security answers:", error.message);
       return { success: false, error: error.message };
     }
 
     if (!data) {
+      await insertLog(session?.user?.id, "Error No security answers found");
       return { success: false, error: "No security answers found" };
     }
 
@@ -191,6 +206,7 @@ export const AuthContextProvider = ({ children }) => {
       data.security_answer1 !== answer1 ||
       data.security_answer2 !== answer2
     ) {
+      await insertLog(session?.user?.id, "Error Invalid security answers");
       return { success: false, error: "Invalid security answers" };
     }
 
