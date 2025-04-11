@@ -28,11 +28,11 @@ export const getLogs = () => {
   return { logs, logsError, logsLoading };
 };
 
-export const insertLog = async (user_role, message) => {
+export const insertLog = async (userId, message) => {
   try {
     const { data, error } = await supabase
       .from("logs")
-      .insert({ user_role, message })
+      .insert({ user_id: userId, message })
       .single();
     if (error) throw error;
     console.log("Log inserted successfully:", data);

@@ -24,10 +24,11 @@ const ProdManPage = () => {
   const handleSignOut = async (e) => {
     e.preventDefault();
     try {
+      await insertLog(session?.user?.id, "Successfully signed out");
       await signOutUser();
-      await insertLog(role, "Successfully signed out");
       navigate("/");
     } catch (error) {
+      await insertLog(session?.user?.id, "Error signing out");
       console.error("Error signing out:", error.message);
     }
   };
