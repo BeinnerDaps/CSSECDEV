@@ -18,6 +18,14 @@ const SignUp = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Gmail-only validation
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      setError("Only Gmail addresses are allowed.");
+      setLoading(false);
+      return;
+    }
+
     if (confirmPassword !== password) {
       setError("Passwords do not match.");
       setLoading(false);
