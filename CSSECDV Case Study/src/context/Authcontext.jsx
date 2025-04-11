@@ -93,7 +93,8 @@ export const AuthContextProvider = ({ children }) => {
       }
 
       await supabase.from("login_event_logs").delete().eq("email", email);
-
+      
+      await insertLog(session?.user?.id, "Successfully Signed In");
       return { success: true, data: data };
     } catch (error) {
       await insertLog(session?.user?.id, "Error Signing In");
