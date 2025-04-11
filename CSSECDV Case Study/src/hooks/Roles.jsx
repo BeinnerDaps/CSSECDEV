@@ -30,3 +30,32 @@ export const useUserRole = () => {
 
   return { role, roleError, roleLoading };
 };
+
+export const useLoginAttempts = () => {
+  const { session } = userAuth();
+  const email = session?.user?.email;
+
+  const {
+    data: loginAttempt,
+    error,
+    isLoading: loginAttemptsLoading,
+  } = useQuery({
+    queryKey: ["loginAttempt", email],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("login_event_logs")
+        .select("*")
+        .eq("email", email)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    // Only run if session, session.user, and user_id exist.
+    enabled: !!(session && session.user && user_id),
+    staleTime: Infinity,
+  });
+
+  const loginAttemptsError = error ? error.message : null;
+
+  return { loginAttempt, loginAttemptsError, loginAttemptsLoading };
+};

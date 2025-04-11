@@ -129,7 +129,7 @@ export const AuthContextProvider = ({ children }) => {
       return { success: true };
     } catch (error) {
       console.error("Error updating password:", error);
-      return { success: false, error: error.details || error.message };
+      return { success: false, error };
     }
   };
 
@@ -166,35 +166,35 @@ export const AuthContextProvider = ({ children }) => {
 
     if (error) {
       console.error("Error setting security questions:", error.message);
-      return { success: false, error };
+      return { success: false, error: error.message };
     }
     return { success: true };
   };
 
   const checkSecurityAnswers = async (user_id, answer1, answer2) => {
-    const { data, error } = await supabase
-      .from("user_security")
-      .select("security_answer1, security_answer2")
-      .eq("user_id", user_id)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("user_security")
+        .select("security_answer1, security_answer2")
+        .eq("user_id", user_id)
+        .single();
 
-    if (error) {
+      if (error) throw error;
+
+      if (!data) throw new Error("No security answers found");
+
+      if (
+        data.security_answer1 !== answer1 ||
+        data.security_answer2 !== answer2
+      ) {
+        throw new Error("Security answers do not match");
+      }
+
+      return { success: true };
+    } catch (error) {
       console.error("Error checking security answers:", error.message);
-      return { success: false, error: error.message };
+      return { success: false, error };
     }
-
-    if (!data) {
-      return { success: false, error: "No security answers found" };
-    }
-
-    if (
-      data.security_answer1 !== answer1 ||
-      data.security_answer2 !== answer2
-    ) {
-      return { success: false, error: "Invalid security answers" };
-    }
-
-    return { success: true };
   };
 
   // Return the context provider with the session and auth functions

@@ -26,7 +26,7 @@ const authenticateSecurityQuestions = () => {
       if (success) {
         setQuestions(data);
       } else {
-        setMessage(`Error: ${error.message}`);
+        setMessage(error);
       }
       setLoading(false);
     };
@@ -40,20 +40,24 @@ const authenticateSecurityQuestions = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { success, error } = await checkSecurityAnswers(
-      user_id,
-      answers.security_answer1,
-      answers.security_answer2
-    );
 
-    console.log(answered);
+    try {
+      const result = await checkSecurityAnswers(
+        user_id,
+        answers.security_answer1,
+        answers.security_answer2
+      );
 
-    if (success) {
-      setAnswered(true);
-    } else {
-      setMessage("Error:", error);
+      if (result.error) throw result.error;
+
+      if (result.success) {
+        setAnswered(true);
+      }
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (loading)
@@ -147,7 +151,7 @@ const ChangePassword = () => {
   const { session, signInUser, updatePassword, signOutUser } = userAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
   const [currPass, setCurrPass] = useState("");
@@ -156,13 +160,19 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(null);
+    setMessage("");
     setLoading(true);
 
     // Attempt to sign in using the provided password
     try {
       if (confirmPass !== newPass) {
         setMessage("Passwords do not match.");
+        setLoading(false);
+        return;
+      }
+
+      if (currPass === newPass) {
+        setMessage("New password cannot be the same as the current password.");
         setLoading(false);
         return;
       }
@@ -174,15 +184,11 @@ const ChangePassword = () => {
       }
       const result = await signInUser(email, currPass);
 
-      if (!result.success) {
-        throw new Error(result.error);
-      }
+      if (result.error) throw result.error;
 
       const update = await updatePassword(newPass);
 
-      if (!update.success) {
-        throw new Error(update.error);
-      }
+      if (update.error) throw update.error;
 
       console.log("Password updated successfully!");
       await signOutUser();
@@ -245,13 +251,6 @@ const ChangePassword = () => {
             />
           </div>
 
-          {message && <div className="text-center">{message}</div>}
-          {success && (
-            <div className="text-center text-green-500">
-              Password changed successfully!
-            </div>
-          )}
-
           <div className="space-x-2">
             <button
               type="submit"
@@ -273,6 +272,13 @@ const ChangePassword = () => {
             </button>
           </div>
         </form>
+
+        {message && <p className="text-center mt-4">{message}</p>}
+        {success && (
+          <div className="text-center text-green-500">
+            Password changed successfully!
+          </div>
+        )}
       </div>
     </div>
   );
