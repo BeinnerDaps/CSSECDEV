@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
 import { useNavigate } from "react-router-dom";
-import { insertLog } from "../hooks/Logs";
+import { insertLog, getLogs } from "../hooks/Logs";
 
 const AdminPage = () => {
   const { session, signOutUser } = userAuth();
   const navigate = useNavigate();
 
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { logs, logsError, logsLoading } = insertLog();
+  const { logs, logsError, logsLoading } = getLogs();
 
   const handleSignOut = async (e) => {
     e.preventDefault();
