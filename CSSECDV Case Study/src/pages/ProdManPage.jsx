@@ -43,22 +43,26 @@ const ProdManPage = () => {
 
     const nameRegex = /^[A-Za-z]+$/;
     if (!nameRegex.test(productName)) {
+      await insertLog(session?.user?.id, "Invalid Product Name Input");
       alert("Name must contain alphabet characters (A-Z and a-z) only.");
       return;
     }
 
     if (productQuantity.length > 10) {
+      await insertLog(session?.user?.id, "Invalid Quantity Size Input");
       alert("Quantity cannot exceed 10 digits.");
       return;
     }
 
     const quantityInt = parseInt(productQuantity, 10);
     if (isNaN(quantityInt) || quantityInt < 1) {
+      await insertLog(session?.user?.id, "Invalid Quantity Amount Input");
       alert("Quantity must be a positive integer greater than 0.");
       return;
     }
 
     if (!productDescription.trim()) {
+      await insertLog(session?.user?.id, "Description cannot be empty");
       alert("Description cannot be empty.");
       return;
     }
@@ -71,6 +75,7 @@ const ProdManPage = () => {
       );
 
       if (result.success) {
+        await insertLog(session?.user?.id, "Product Successfully Added: " + productName);
         setProductName("");
         setProductDescription("");
         setProductQuantity("");
@@ -82,6 +87,7 @@ const ProdManPage = () => {
         setSuccess("");
       }
     } catch (error) {
+      await insertLog(session?.user?.id, "Error Adding Product: " + productName);
       console.error("Error adding product:", error.message);
     }
   };
@@ -90,14 +96,17 @@ const ProdManPage = () => {
     try {
       const result = await deleteProduct(id);
       if (result.success) {
+        await insertLog(session?.user?.id, "Product Successfully Deleted: " + productName);
         queryClient.invalidateQueries({ queryKey: ["products"] });
         setSuccess("Product deleted successfully.");
         setMessage("");
       } else {
+        await insertLog(session?.user?.id, "Error Deleting Product: " + productName);
         setMessage("Error: " + result.error);
         setSuccess("");
       }
     } catch (error) {
+      await insertLog(session?.user?.id, "Error Deleting Product: " + productName);
       console.error("Error deleting product:", error.message);
     }
   };

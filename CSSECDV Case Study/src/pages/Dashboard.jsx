@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
+import { insertLog } from "../hooks/Logs";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -12,9 +13,11 @@ const Dashboard = () => {
   const handleSignOut = async (e) => {
     e.preventDefault();
     try {
+      await insertLog(session?.user?.id, "Successfully signed out");
       await signOutUser();
       navigate("/");
     } catch (error) {
+      await insertLog(session?.user?.id, "Error signing out");
       console.error("Error signing out:", error.message);
     }
   };
@@ -24,6 +27,7 @@ const Dashboard = () => {
     try {
       navigate("/settings");
     } catch (error) {
+      await insertLog(session?.user?.id, "Error navigating to settings");
       console.error("Error navigating to settings:", error.message);
     }
   };

@@ -2,21 +2,23 @@ import React, { useEffect, useState } from "react";
 import { userAuth } from "../context/Authcontext";
 import { useUserRole } from "../hooks/Roles";
 import { useNavigate } from "react-router-dom";
-import { getLogs } from "../hooks/Logs";
+import { insertLog } from "../hooks/Logs";
 
 const AdminPage = () => {
   const { session, signOutUser } = userAuth();
   const navigate = useNavigate();
 
   const { role, roleError, roleLoading } = useUserRole(session?.user?.id);
-  const { logs, logsError, logsLoading } = getLogs();
+  const { logs, logsError, logsLoading } = insertLog();
 
   const handleSignOut = async (e) => {
     e.preventDefault();
     try {
+      await insertLog(session?.user?.id, "Successfully signed out");
       await signOutUser();
       navigate("/");
     } catch (error) {
+      await insertLog(session?.user?.id, "Error signing out");
       console.error("Error signing out:", error.message);
     }
   };
@@ -26,6 +28,7 @@ const AdminPage = () => {
     try {
       navigate("/settings");
     } catch (error) {
+      await insertLog(session?.user?.id, "Error navigating to settings");
       console.error("Error navigating to settings:", error.message);
     }
   };
