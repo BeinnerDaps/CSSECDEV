@@ -31,7 +31,7 @@ export const SelectRoute = ({ children }) => {
     user: "/user",
   };
 
-  const allowedPath = roleToPath[role];
+  const allowedPath = roleToPath[role] || "/";
 
   if (!location.pathname.startsWith(allowedPath)) {
     return <Navigate to={allowedPath} replace />;
